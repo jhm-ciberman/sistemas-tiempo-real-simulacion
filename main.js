@@ -29,6 +29,10 @@ class SimulationProcess {
         this.gasCaudal = 10;
     }
     
+    timeConstant() {
+        return this.c1 / (this.c2 * this.v);
+    }
+
     /**
      * Calculates the derivative of the process function
      * @returns The value of the derivative of dTi/dt
@@ -47,33 +51,37 @@ class SimulationProcess {
     }
 }
 
-
-
-
-window.addEventListener('load', () => {
-
-    const simulation = new SimulationProcess(25, 200, 2);
+function chart(idChart, v, c1, c2) {
+    const simulation = new SimulationProcess(v, c1, c2);
     const interiorTemperatureStart = 18;
 
-    const simulationValue = simulation.function(interiorTemperatureStart);
-    //const timeConstantValue = time.map(t => )
+    const simulationPoints = simulation.function(interiorTemperatureStart);
+    const timeConstantX = simulation.timeConstant();
+    const timeConstantY = simulationPoints.find(p => p.x > timeConstantX).y;
 
     const data = {
-        labels: simulationValue.map(p => p.x),
+        labels: simulationPoints.map(p => p.x),
         datasets: [
             {
                 type: 'line',
                 label: 'Ejercicio 1 - Lazo Abierto',
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
-                data: simulationValue.map(p => p.y),
+                backgroundColor: 'rgba(60, 90, 255, 0.3)',
+                borderColor: 'rgba(60, 90, 255, 1.0)',
+                data: simulationPoints,
+                parsing: {
+                    yAxisKey: 'y',
+                }
             }, 
-            //{
-            //    label: 'Constante de tiempo',
-            //    backgroundColor: 'rgb(99, 255, 132)',
-            //    borderColor: 'rgb(255, 99, 132)',
-            //    data: ,
-            //}
+            {
+                type: 'bar',
+                label: 'Constante de tiempo',
+                backgroundColor: 'rgb(0, 0, 0, 0.3)',
+                borderColor: 'rgba(0, 0, 0, 1.0)',
+                data: [{x: timeConstantX, y: timeConstantY}],
+                parsing: {
+                    yAxisKey: 'y',
+                }
+            }
 
         ],
     };
@@ -85,7 +93,7 @@ window.addEventListener('load', () => {
                 title: {
                     display: true,
                     text: 'Tiempo (h)'
-                }
+                },
             },
             y: {
                 display: true,
@@ -97,8 +105,20 @@ window.addEventListener('load', () => {
         }
     };
 
-    var element = document.getElementById('myChart');
-    var myChart = new Chart(element, {
+    var element = document.getElementById(idChart);
+    return new Chart(element, {
         type: 'line', data, options,
     });
+}
+
+function reloadCharts() {
+    const v = document.getElementById("value-v").value;
+    const c1 = document.getElementById("value-c1").value;
+    const c2 = document.getElementById("value-c2").value;
+    chart('myChart1', v, c1, c2);
+    chart('myChart2', v * 2, c1, c2);
+}
+
+window.addEventListener('load', () => {
+    reloadCharts();
 });

@@ -5,13 +5,44 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulacion Sistemas de tiempo real</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
     <script src="main.js"></script>
 </head>
 <body>
-    <h1>Simulacion Sistemas de tiempo real</h1>
-    <div>
-        <canvas id="myChart" style="max-width: 1000px; max-height: 600px;"></canvas>
+    <div class="container">
+        <h1>Simulacion Sistemas de tiempo real</h1>
+        <p>Alumno: Javier Hernán Mora. Universidad FASTA.</p>
+        <h2>Ejercicio 1: </h2>
+        <hr>
+        <div class="row" style="display: none;">
+            <div class="col">
+                <label for="value-v">V</label>
+                <input type="number" class="form-control" name="value-v" id="value-v" value="25" onchange="reloadCharts">
+            </div>
+            <div class="col">
+                <label for="value-c1">C1</label>
+                <input type="number" class="form-control" name="value-c1" id="value-c1" value="200" onchange="reloadCharts">
+            </div>
+            <div class="col">
+                <label for="value-c2">C2</label>
+                <input type="number" class="form-control" name="value-c2" id="value-c2" value="2" onchange="reloadCharts">
+            </div>
+            <div class="col">
+                <button id="btn-simulate" class="btn btn-primary" onsubmit="reloadCharts">Simular</button>
+            </div>
+        </div>
+        <p class="text-primary text-bold">a) Simular el comportamiento dinámico del proceso para lazo abierto, utilizando el método de resolución de ecuaciones diferenciales de Euler.</p>
+        <img src="valores.png" width="200px" alt="Valores de simulación">
+        <p>V = 25. C1 = 100. C2 = 2</p>
+        <p class="text-primary">b) Obtener un gráfico del comportamiento dinámico del proceso (temperatura Ti en función del tiempo).</p>
+        <canvas id="myChart1" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <p class="text-primary">c) Indicar en el gráfico la constante de tiempo del proceso.</p>
+        <p>La constante de tiempo está dada por la fórmula: <code>C1 / (C2 * V)</code>. El valor es de <code>4</code> horas</p>
+        <p class="text-primary">d) Analizar cómo varía el comportamiento simulado si se duplica el volumen del recinto o si se reduce a la mitad.</p>
+        <canvas id="myChart2" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <p class="text-primary">e) ¿Qué sucede con la constante de tiempo para las situaciones del inciso d?</p>
+        <p>La constante de tiempo se reduce a la mitad (De <code>4</code> pasa a ser <code>2</code>)</p>
     </div>
 </body>
 </html>
