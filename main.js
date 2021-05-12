@@ -1,124 +1,93 @@
-
-// Returns {x: array, y: array}
-function euler(func, x0, y0, dx, n = 100) {
-    //const dx = (xn - x0) / n;
-    const list = [];
-
-    let point = {x: x0, y: y0};
-
-    for (let i = 0; i < n; i++) {
-        point = {
-            x: point.x + dx,
-            y: point.y + func(point.x, point.y) * dx,
-        };
-        list.push(point);
+class OptionsGUIPanel {
+    constructor() {
+        this._inputV = document.getElementById("value-v");
+        this._inputC1 = document.getElementById("value-c1");
+        this._inputC2 = document.getElementById("value-c2");
+        this._inputM = document.getElementById("value-m");
+        this._inputExteriorTemperature = document.getElementById("value-temp-ext");
+        this._inputInteriorTemperature = document.getElementById("value-temp-int");
+        this._inputGasCaudal = document.getElementById("value-gas-caudal");
+        this._inputSimulationTime = document.getElementById("value-sim-time");
     }
 
-    return list;
+    get v() { return parseFloat(this._inputV.value); }
+    get c1() { return parseFloat(this._inputC1.value);}
+    get c2() { return parseFloat(this._inputC2.value); }
+    get m() { return parseFloat(this._inputM.value);}
+    get exteriorTemperature() {return parseFloat(this._inputExteriorTemperature.value);}
+    get interiorTemperature() { return parseFloat(this._inputInteriorTemperature.value); }
+    get gasCaudal() { return parseFloat(this._inputGasCaudal.value);}
+    get time() { return parseFloat(this._inputSimulationTime.value); }
 }
 
-class SimulationProcess {
-    
-    constructor(v, c1, c2) {
-        this.v = v;
-        this.c1 = c1;
-        this.c2 = c2;
-        this.m = 10;
-        this.exteriorTemperature = 18;
-        this.time = 0.125;
-        this.gasCaudal = 10;
-    }
-    
-    timeConstant() {
-        return this.c1 / (this.c2 * this.v);
-    }
+class Main {
 
-    /**
-     * Calculates the derivative of the process function
-     * @returns The value of the derivative of dTi/dt
-     */
-    derivative(_x, y) {
-        const interiorTemperature = y;
-        return (this.m * this.gasCaudal - this.c2 * this.v * (interiorTemperature - this.exteriorTemperature)) / this.c1;
-    }
+    constructor() {
+        this.chart1 = new ProcessSimulationGraph(document.querySelector('#myChart1'));
+        this.chart2 = new ProcessSimulationGraph(document.querySelector('#myChart2'));
 
-    function(interiorTemperatureStart) {
-        const func = (x, y) => this.derivative(x, y);
-        const timeStart = 0;
-        const deltaTime = 0.125;
-        const numberOfPoints = 200;
-        return euler(func, timeStart, interiorTemperatureStart, deltaTime, numberOfPoints);
-    }
-}
-
-function chart(idChart, v, c1, c2) {
-    const simulation = new SimulationProcess(v, c1, c2);
-    const interiorTemperatureStart = 18;
-
-    const simulationPoints = simulation.function(interiorTemperatureStart);
-    const timeConstantX = simulation.timeConstant();
-    const timeConstantY = simulationPoints.find(p => p.x > timeConstantX).y;
-
-    const data = {
-        labels: simulationPoints.map(p => p.x),
-        datasets: [
-            {
-                type: 'line',
-                label: 'Ejercicio 1 - Lazo Abierto',
-                backgroundColor: 'rgba(60, 90, 255, 0.3)',
-                borderColor: 'rgba(60, 90, 255, 1.0)',
-                data: simulationPoints,
-                parsing: {
-                    yAxisKey: 'y',
-                }
-            }, 
-            {
-                type: 'bar',
-                label: 'Constante de tiempo',
-                backgroundColor: 'rgb(0, 0, 0, 0.3)',
-                borderColor: 'rgba(0, 0, 0, 1.0)',
-                data: [{x: timeConstantX, y: timeConstantY}],
-                parsing: {
-                    yAxisKey: 'y',
-                }
-            }
-
-        ],
-    };
-    
-    const options = {
-        scales: {
-            x: {
-                display: true,
-                title: {
-                    display: true,
-                    text: 'Tiempo (h)'
-                },
-            },
-            y: {
-                display: true,
-                title: {
-                    display: true,
-                    text: 'Temperatura interior (ºC)'
-                },
-            }
+        const inputs = document.querySelectorAll(".simulation-value");
+        for (const input of inputs) {
+            input.addEventListener('change', () => this.update())
         }
-    };
 
-    var element = document.getElementById(idChart);
-    return new Chart(element, {
-        type: 'line', data, options,
-    });
+        this._options = new OptionsGUIPanel();
+
+
+        this._displayTimeConstant1 = document.querySelectorAll(".display-time-constant1");
+        this._displayTimeConstant2 = document.querySelectorAll(".display-time-constant2");
+        this._displayTimeConstant3 = document.querySelectorAll(".display-time-constant3");
+
+        this._showAnimation = true;
+    }
+
+    update() {
+        const v = this._options.v;
+        const c1 = this._options.c1;
+        const c2 = this._options.c2;
+        const m = this._options.m;
+        const exteriorTemperature = this._options.exteriorTemperature;
+        const interiorTemperature = this._options.interiorTemperature;
+        const gasCaudal = this._options.gasCaudal;
+        const time = this._options.time;
+    
+        const kc = 10; // 10, 25, 50, 100 y 500
+        const kv = 2;
+        const kh = 0.05;
+        const targetTemperature = 24;
+    
+        const process1 = new OpenLoopProcess({
+            name: `Lazo Abierto (V=${v})`,
+            v, c1, c2, m, exteriorTemperature, interiorTemperature, gasCaudal,
+        });
+        const sim1 = new Simulation(process1, time);
+        
+        const process2 = new OpenLoopProcess({
+            name: `Lazo Abierto (V=${v*2})`,
+            v: v * 2, c1, c2, m, exteriorTemperature, interiorTemperature, gasCaudal,
+        });
+        const sim2 = new Simulation(process2, time);
+    
+        const process3 = new OpenLoopProcess({
+            name: `Lazo Abierto (V=${v/2})`,
+            v: v / 2, c1, c2, m, exteriorTemperature, interiorTemperature, gasCaudal,
+        });
+        const sim3 = new Simulation(process3, time);
+    
+        this.chart1.show([sim1], this._showAnimation);
+        this.chart2.show([sim1, sim2, sim3], this._showAnimation);
+        this._showAnimation = false;
+        
+        for (const element of this._displayTimeConstant1) element.innerHTML = sim1.getTimeConstant();
+        for (const element of this._displayTimeConstant2) element.innerHTML = sim2.getTimeConstant();
+        for (const element of this._displayTimeConstant3) element.innerHTML = sim3.getTimeConstant();
+    }
+
 }
 
-function reloadCharts() {
-    const v = document.getElementById("value-v").value;
-    const c1 = document.getElementById("value-c1").value;
-    const c2 = document.getElementById("value-c2").value;
-    chart('myChart1', v, c1, c2);
-    chart('myChart2', v * 2, c1, c2);
-}
 
+let main;
 window.addEventListener('load', () => {
-    reloadCharts();
+    main = new Main();
+    main.update();
 });
