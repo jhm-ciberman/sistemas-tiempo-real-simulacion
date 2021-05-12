@@ -65,14 +65,65 @@
             </div>
         </div>
         <p class="text-primary">b) Obtener un gráfico del comportamiento dinámico del proceso (temperatura Ti en función del tiempo).</p>
-        <canvas id="myChart1" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <canvas id="chart1" style="max-width: 1000px; max-height: 600px;"></canvas>
         <p class="text-primary">c) Indicar en el gráfico la constante de tiempo del proceso.</p>
         <p>La constante de tiempo está dada por la fórmula: <code>C1 / (C2 * V)</code>. El valor es de <code class="display-time-constant1">4</code> horas</p>
         <p class="text-primary">d) Analizar cómo varía el comportamiento simulado si se duplica el volumen del recinto o si se reduce a la mitad.</p>
-        <canvas id="myChart2" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <canvas id="chart2" style="max-width: 1000px; max-height: 600px;"></canvas>
         <p class="text-primary">e) ¿Qué sucede con la constante de tiempo para las situaciones del inciso d?</p>
         <p>En el primer caso, constante de tiempo se reduce a la mitad (De <code class="display-time-constant1">4</code> pasa a ser <code class="display-time-constant2">2</code>)</p>
         <p>En el segundo caso, constante de tiempo aumenta al doble (De <code class="display-time-constant1">4</code> pasa a ser <code class="display-time-constant3">8</code>)</p>
+    
+        <h2>Ejercicio 2: </h2>
+        <p>Se coloca una válvula para controlar la temperatura en el recinto del ejercicio anterior. Entonces, el caudal
+            de gas Cg será manipulado para controlar la temperatura. Por lo tanto, Ti no es una variable libre, sino
+            que se verá afectada por una válvula de control.</p>
+        <ul>
+            <li><b>kv</b> = 2 m<sup>3</sup> / (h * psi)</li>
+            <li><b>kh</b> = 0,05 mA / ºC</li>
+        </ul>
+        <p>Considerar que en estado estacionario, la temperatura del recinto Ti es 18 ºC, y el resto de las variables
+            del lazo valen 0. (El lazo permanece en ese estado hasta que se pida una temperatura diferente.
+            A la salida del controlador, se coloca un transductor que, por cada mA, entrega 1 psi.
+            Considerar un valor deseado de 24ºC.</p>
+
+        <p class="text-primary">a) Efectuar la simulación del lazo cerrado para los siguientes valores de kc: 10, 25, 50, 100 y 500. Si para
+            los valores indicados, no es posible observar el valor del error estacionario, elegir otros valores de kc, mayores o menores, según corresponda.</p>
+
+        <div class="row mb-4">
+            <div class="col">
+                <label for="value-kc-list">Valores de KC separados por comas</label>
+                <input type="text" class="form-control simulation-value" name="value-kc-list" id="value-kc-list" value="10, 25, 50, 100, 500">
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col">
+                <label for="value-kv">KV</label>
+                <input type="number" class="form-control simulation-value" name="value-kv" id="value-kv" value="2">
+            </div>
+            <div class="col">
+                <label for="value-kh">KH</label>
+                <input type="number" class="form-control simulation-value" name="value-kh" id="value-kh" value="0.05">
+            </div>
+            <div class="col">
+                <label for="value-target-temp">Temperatura esperada</label>
+                <input type="number" class="form-control simulation-value" name="value-target-temp" id="value-target-temp" value="24">
+            </div>
+        </div>
+
+        <p class="text-primary">b) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en función deltiempo).</p>
+        <canvas id="chart3" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <p class="text-primary">c) Para cada valor de kc, calcular la constante de tiempo del lazo cerrado, mostrando su ubicación en el gráfico correspondiente.</p>
+        <div id="display-closed-loop-time-constant">Resultados de la simulación</div>
+        
+        <p class="text-primary">d) Para cada valor de kc, calcular la constante K del Lazo.</p>
+        <div id="display-closed-loop-k">Resultados de la simulación</div>
+        <p class="text-primary">e) Para cada valor de kc, calcular el valor del error estacionario (en las unidades de la variable directamente controlada) y verificarlo en los gráficos obtenidos.</p>
+        <div id="display-closed-loop-sse">Resultados de la simulación</div>
+        <p class="text-primary">f) Hacer un gráfico que permita comparar las curvas correspondientes a los diferentes valores de kc.</p>
+        <p>Arriba.</p>
+        <p class="text-primary">g) Analizar los resultados obtenidos, comparándolos entre sí, y con los resultados obtenidos para lazo abierto.</p>
+        <p>Con el modelo de lazo cerrado se puede observar como la variable llega al valor esperado de forma mucho más rápida que con un lazo abierto.</p>
     </div>
 </body>
 </html>

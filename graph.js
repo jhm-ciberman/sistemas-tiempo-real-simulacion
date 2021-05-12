@@ -55,11 +55,11 @@ class ProcessSimulationGraph {
             const points = simulation.getPoints();
             const timeContantPoint = simulation.getTimeConstantPoint();
             timeLabels = points.map(p => p.time);
-            datasets.push(new LineDataSet(colorIndex, simulation.getName(), points));
+            datasets.push(new LineDataSet(colorIndex, `${simulation.getName()} (${simulation.getInfo()})`, points));
 
             if (timeContantPoint) { // can be null if it's not in the simulated time range
                 const timeContant = simulation.getTimeConstant();
-                datasets.push(new BarDataSet(`Constante de tiempo = ${timeContant.toFixed(2) }h`, [timeContantPoint]));
+                datasets.push(new BarDataSet(`Constante de tiempo de ${simulation.getName()} = ${timeContant.toFixed(2) }h`, [timeContantPoint]));
             }
 
             colorIndex++;

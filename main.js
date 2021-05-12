@@ -8,6 +8,11 @@ class OptionsGUIPanel {
         this._inputInteriorTemperature = document.getElementById("value-temp-int");
         this._inputGasCaudal = document.getElementById("value-gas-caudal");
         this._inputSimulationTime = document.getElementById("value-sim-time");
+
+        this._inputKcList = document.getElementById("value-kc-list");
+        this._inputKv = document.getElementById("value-kv");
+        this._inputKh = document.getElementById("value-kh");
+        this._inputTargetTemp = document.getElementById("value-target-temp");
     }
 
     get v() { return parseFloat(this._inputV.value); }
@@ -18,13 +23,19 @@ class OptionsGUIPanel {
     get interiorTemperature() { return parseFloat(this._inputInteriorTemperature.value); }
     get gasCaudal() { return parseFloat(this._inputGasCaudal.value);}
     get time() { return parseFloat(this._inputSimulationTime.value); }
+
+    get kcValues() { return this._inputKcList.value.split(',').map(v => parseFloat(v)); }
+    get kv() { return parseFloat(this._inputKv.value); }
+    get kh() { return parseFloat(this._inputKh.value); }
+    get targetTemp() { return parseFloat(this._inputTargetTemp.value); }
 }
 
 class Main {
 
     constructor() {
-        this.chart1 = new ProcessSimulationGraph(document.querySelector('#myChart1'));
-        this.chart2 = new ProcessSimulationGraph(document.querySelector('#myChart2'));
+        this._chart1 = new ProcessSimulationGraph(document.querySelector('#chart1'));
+        this._chart2 = new ProcessSimulationGraph(document.querySelector('#chart2'));
+        this._chart3 = new ProcessSimulationGraph(document.querySelector('#chart3'));
 
         const inputs = document.querySelectorAll(".simulation-value");
         for (const input of inputs) {
@@ -41,7 +52,28 @@ class Main {
         this._showAnimation = true;
     }
 
-    update() {
+    update() { 
+        this.tp1();
+        this.tp2();
+        
+        this._showAnimation = false;
+    }
+
+    _createOpenLoopProcess(name, v) { 
+        const c1 = this._options.c1;
+        const c2 = this._options.c2;
+        const m = this._options.m;
+        const exteriorTemperature = this._options.exteriorTemperature;
+        const interiorTemperature = this._options.interiorTemperature;
+        const gasCaudal = this._options.gasCaudal;
+
+        return new OpenLoopProcess({
+            name, info: `V=${v}`, 
+            v,  c1,  c2,  m,  exteriorTemperature,  interiorTemperature,  gasCaudal,
+        });
+    }
+
+    _createClosedLoopProcess(name, kc) { 
         const v = this._options.v;
         const c1 = this._options.c1;
         const c2 = this._options.c2;
@@ -49,40 +81,62 @@ class Main {
         const exteriorTemperature = this._options.exteriorTemperature;
         const interiorTemperature = this._options.interiorTemperature;
         const gasCaudal = this._options.gasCaudal;
-        const time = this._options.time;
-    
-        const kc = 10; // 10, 25, 50, 100 y 500
-        const kv = 2;
-        const kh = 0.05;
-        const targetTemperature = 24;
-    
-        const process1 = new OpenLoopProcess({
-            name: `Lazo Abierto (V=${v})`,
+        const kv = this._options.kv;
+        const kh = this._options.kh;
+        const targetTemperature = this._options.targetTemp;
+
+        return new ClosedLoopProcess({
+            name, info: `KC=${kc}`,
             v, c1, c2, m, exteriorTemperature, interiorTemperature, gasCaudal,
+            kc, kv, kh, targetTemperature,
         });
+    }
+
+    tp1() {
+        const v = this._options.v;
+        const process1 = this._createOpenLoopProcess("Proceso A", v);
+        const process2 = this._createOpenLoopProcess("Proceso B", v * 2);
+        const process3 = this._createOpenLoopProcess("Proceso C", v / 2);
+
+        const time = this._options.time;
         const sim1 = new Simulation(process1, time);
-        
-        const process2 = new OpenLoopProcess({
-            name: `Lazo Abierto (V=${v*2})`,
-            v: v * 2, c1, c2, m, exteriorTemperature, interiorTemperature, gasCaudal,
-        });
         const sim2 = new Simulation(process2, time);
-    
-        const process3 = new OpenLoopProcess({
-            name: `Lazo Abierto (V=${v/2})`,
-            v: v / 2, c1, c2, m, exteriorTemperature, interiorTemperature, gasCaudal,
-        });
         const sim3 = new Simulation(process3, time);
     
-        this.chart1.show([sim1], this._showAnimation);
-        this.chart2.show([sim1, sim2, sim3], this._showAnimation);
-        this._showAnimation = false;
-        
+        this._chart1.show([sim1], this._showAnimation);
+        this._chart2.show([sim1, sim2, sim3], this._showAnimation);
+
         for (const element of this._displayTimeConstant1) element.innerHTML = sim1.getTimeConstant();
         for (const element of this._displayTimeConstant2) element.innerHTML = sim2.getTimeConstant();
         for (const element of this._displayTimeConstant3) element.innerHTML = sim3.getTimeConstant();
     }
 
+    tp2() {
+        const simulations = [];
+        let strTimeConstant = "<ul>";
+        let strKConstant = "<ul>";
+        let strSSEConstant = "<ul>";
+        
+        for (let kc of this._options.kcValues) {
+            const letter = String.fromCharCode(65 + simulations.length);
+            const process = this._createClosedLoopProcess(`Lazo ${letter}`, kc);
+            const simulation = new Simulation(process, this._options.time);
+            simulations.push(simulation);
+
+            strTimeConstant += `<li><b>${process.name}</b>: La constante de tiempo value <code>${process.getTimeConstant()}h</code>.</li>`;
+            strKConstant += `<li><b>${process.name}</b>: El valor de K es: <code>${process.getK()}</code> (Kp = <code>${process.getKp()}</code>)</li>`;
+            strSSEConstant += `<li><b>${process.name}</b>: El valor del error estacionario es: <code>${process.getSteadyStateError()}</code>.</li>`;
+        }
+        
+        this._chart3.show(simulations, this._showAnimation);
+        
+        strTimeConstant += "</ul>";
+        strKConstant += "</ul>";
+        strSSEConstant += "</ul>";
+        document.querySelector("#display-closed-loop-time-constant").innerHTML = strTimeConstant;
+        document.querySelector("#display-closed-loop-k").innerHTML = strKConstant;
+        document.querySelector("#display-closed-loop-sse").innerHTML = strSSEConstant;
+    }
 }
 
 

@@ -36,9 +36,12 @@ class Simulation {
     /**
      * @returns The name of the simulation
      */
-    getName() {
-        return this._process.name;
-    }
+    getName() { return this._process.name; }
+
+    /**
+     * @returns The info string for the simulation
+     */
+    getInfo() { return this._process.info; }
 
     /**
      * Returns a list with the simulated points of the simulation.
@@ -73,6 +76,7 @@ class Simulation {
 class Process {
     constructor(options = {}) {
         this.name = options.name ?? "Process";
+        this.info = options.info ?? "";
     }
 
     /**
@@ -136,6 +140,12 @@ class ClosedLoopProcess extends OpenLoopProcess {
         this.kh = options.kh ?? 0.05;
         this.targetTemperature = options.targetTemperature ?? 24;
     }
+
+    getKp() { return this.m / (this.c2 * this.v); }
+
+    getK() { return this.getKp() * this.kc * this.kv * this.kh; }
+
+    getSteadyStateError() { return 1 / (1 + this.getK()); }
 
     simulateStep(deltaTime) {
         const deltaGasCaudal = (this.kv * this.kc * this.kh * (this.targetTemperature - this.interiorTemperature));
