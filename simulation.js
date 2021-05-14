@@ -141,11 +141,21 @@ class ClosedLoopProcess extends OpenLoopProcess {
         this.targetTemperature = options.targetTemperature ?? 24;
     }
 
-    getKp() { return this.m / (this.c2 * this.v); }
+    getTimeConstant() {
+        return super.getTimeConstant() / (1 + this.getK());
+    }
 
-    getK() { return this.getKp() * this.kc * this.kv * this.kh; }
+    getKp() { 
+        return this.m / (this.c2 * this.v); 
+    }
 
-    getSteadyStateError() { return 1 / (1 + this.getK()); }
+    getK() { 
+        return this.getKp() * this.kc * this.kv * this.kh; 
+    }
+
+    getSteadyStateError() { 
+        return 1 / (1 + this.getK()); 
+    }
 
     simulateStep(deltaTime) {
         const deltaGasCaudal = (this.kv * this.kc * this.kh * (this.targetTemperature - this.interiorTemperature));
