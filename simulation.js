@@ -121,6 +121,10 @@ class OpenLoopProcess extends Process {
         return this.c1 / (this.c2 * this.v);
     }
 
+    getKp() { 
+        return this.m / (this.c2 * this.v); 
+    }
+
     getValue() {
         return this.interiorTemperature;
     }
@@ -136,17 +140,32 @@ class ClosedLoopProcess extends OpenLoopProcess {
         super(options);
 
         this.kc = options.kc ?? 50;
-        this.kv = options.kv ?? 2;
         this.kh = options.kh ?? 0.05;
         this.targetTemperature = options.targetTemperature ?? 24;
     }
 
-    getTimeConstant() {
-        return super.getTimeConstant() / (1 + this.getK());
+    getDeltaM() { 
+        const deltaR = this.kh * this.targetTemperature;
+        const deltaC1 = this.kh * this.interiorTemperature;
+        const deltaE = deltaR - deltaC1;
+        const deltaM = deltaE * this.kc;
+        return deltaM;
     }
 
-    getKp() { 
-        return this.m / (this.c2 * this.v); 
+    simulateStep(deltaTime) {
+        super.simulateStep(deltaTime);
+    }
+}
+
+class FirstOrderClosedLoopProcess extends ClosedLoopProcess {
+    constructor(options = {}) {
+        super(options);
+
+        this.kv = options.kv ?? 2;
+    }
+
+    getTimeConstant() {
+        return super.getTimeConstant() / (1 + this.getK());
     }
 
     getK() { 
@@ -158,9 +177,35 @@ class ClosedLoopProcess extends OpenLoopProcess {
     }
 
     simulateStep(deltaTime) {
-        const deltaGasCaudal = (this.kv * this.kc * this.kh * (this.targetTemperature - this.interiorTemperature));
+        const deltaGasCaudal = this.getDeltaM() * this.kv;
         this.gasCaudal += deltaGasCaudal * deltaTime;
 
+        super.simulateStep(deltaTime);
+    }
+}
+
+class SecondOrderClosedLoopProcess extends ClosedLoopProcess {
+    constructor(options = {}) {
+        super(options);
+
+        this.fsv = options.fsv ?? 5;
+        this.fk = options.fk ?? 5;
+        this.kt = options.kt ?? 1; 
+    }
+
+    getK() { 
+        return this.getKp() * this.kc * this.kv * this.kh; 
+    }
+
+    getSteadyStateError() { 
+        return 1 / (1 + this.getK()); 
+    }
+
+    simulateStep(deltaTime) {
+        // como el valor de la constante kt es 1, para el programa, donde no se incluyen unidades, no provocaría ningún cambio en los valores de las variables
+        const deltaP = this.getDeltaM() * this.kt;
+        const deltaGasCaudal = (deltaP / this.fsv) - (this.gasCaudal / this.fk);
+        this.gasCaudal += deltaGasCaudal * deltaTime;
         super.simulateStep(deltaTime);
     }
 }

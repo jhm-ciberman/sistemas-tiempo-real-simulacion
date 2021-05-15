@@ -31,7 +31,7 @@ class BarDataSet {
 
 
 class ProcessSimulationGraph {
-    constructor(element, simulations) {
+    constructor(element, showTimeConstantPoint = true) {
         this._chart = new Chart(element, {
             type: 'line', 
             data: {
@@ -45,21 +45,26 @@ class ProcessSimulationGraph {
                 },
             },
         });
+
+        this.showTimeConstantPoint = showTimeConstantPoint;
     }
 
     show(simulations, withAnimation = true) {
         const datasets = [];
         let timeLabels = [];
         let colorIndex = 0;
+        
         for (const simulation of simulations) {
             const points = simulation.getPoints();
-            const timeContantPoint = simulation.getTimeConstantPoint();
             timeLabels = points.map(p => p.time);
             datasets.push(new LineDataSet(colorIndex, `${simulation.getName()} (${simulation.getInfo()})`, points));
-
-            if (timeContantPoint) { // can be null if it's not in the simulated time range
-                const timeContant = simulation.getTimeConstant();
-                datasets.push(new BarDataSet(`Constante de tiempo de ${simulation.getName()} = ${timeContant.toFixed(2) }h`, [timeContantPoint]));
+            
+            if (this.showTimeConstantPoint) {
+                const timeContantPoint = simulation.getTimeConstantPoint();
+                if (timeContantPoint) {  // can be null if it's not in the simulated time range
+                    const timeContant = simulation.getTimeConstant();
+                    datasets.push(new BarDataSet(`Constante de tiempo de ${simulation.getName()} = ${timeContant.toFixed(2) }h`, [timeContantPoint]));
+                }
             }
 
             colorIndex++;

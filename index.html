@@ -93,7 +93,7 @@
         <div class="row mb-4">
             <div class="col">
                 <label for="value-kc-list">Valores de KC separados por comas</label>
-                <input type="text" class="form-control simulation-value" name="value-kc-list" id="value-kc-list" value="10, 25, 50, 100, 500">
+                <input type="text" class="form-control simulation-value" name="value-kc-list" id="value-kc-list1" value="10, 25, 50, 100, 500">
             </div>
         </div>
         <div class="row mb-4">
@@ -114,16 +114,55 @@
         <p class="text-primary">b) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en función deltiempo).</p>
         <canvas id="chart3" style="max-width: 1000px; max-height: 600px;"></canvas>
         <p class="text-primary">c) Para cada valor de kc, calcular la constante de tiempo del lazo cerrado, mostrando su ubicación en el gráfico correspondiente.</p>
-        <div id="display-closed-loop-time-constant">Resultados de la simulación</div>
-        
+        <div id="display-closed-loop1-time-constant">Resultados de la simulación</div>
         <p class="text-primary">d) Para cada valor de kc, calcular la constante K del Lazo.</p>
-        <div id="display-closed-loop-k">Resultados de la simulación</div>
+        <div id="display-closed-loop1-k">Resultados de la simulación</div>
         <p class="text-primary">e) Para cada valor de kc, calcular el valor del error estacionario (en las unidades de la variable directamente controlada) y verificarlo en los gráficos obtenidos.</p>
-        <div id="display-closed-loop-sse">Resultados de la simulación</div>
+        <div id="display-closed-loop1-sse">Resultados de la simulación</div>
         <p class="text-primary">f) Hacer un gráfico que permita comparar las curvas correspondientes a los diferentes valores de kc.</p>
         <p>Arriba.</p>
         <p class="text-primary">g) Analizar los resultados obtenidos, comparándolos entre sí, y con los resultados obtenidos para lazo abierto.</p>
         <p>Con el modelo de lazo cerrado se puede observar como la variable llega al valor esperado de forma mucho más rápida que con un lazo abierto.</p>
+    
+        <h2>Ejercicio 3: </h2>
+
+        <p>En el ejercicio 2, se consideró que la válvula se comportaba linealmente. Es decir que:</p>
+        <img src="formula_3a.png" alt="Formula">
+        <p>Si se considera el comportamiento de una válvula real, se tiene que:</p>
+        <img src="formula_3b.png" alt="Formula">
+
+        <p>El resto de los elementos conservan el comportamiento del ejercicio anterior.</p>
+        <div class="row mb-4">
+            <div class="col">
+                <label for="value-kc-list">Valores de KC separados por comas</label>
+                <input type="text" class="form-control simulation-value" name="value-kc-list" id="value-kc-list2" value="10, 25, 50, 100, 500, 1000">
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col">
+                <label for="value-kt">Kt (psi/mA)</label>
+                <input type="text" class="form-control simulation-value" name="value-kt" id="value-kt" value="1">
+            </div>
+            <div class="col">
+                <label for="value-fsv">FSV</label>
+                <input type="text" class="form-control simulation-value" name="value-fsv" id="value-fsv" value="5">
+            </div>
+            <div class="col">
+                <label for="value-fk">FK</label>
+                <input type="text" class="form-control simulation-value" name="value-fk" id="value-fk" value="5">
+            </div>
+        </div>
+        <p class="text-primary">a) Efectuar la simulación para los mismos valores de kc del ejercicio 2, agregando el valor kc=1000, y
+        obtener un gráfico del comportamiento dinámico del lazo, para cada valor.</p>
+        <canvas id="chart4" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <p class="text-primary">b) Para cada valor de kc, calcular la constante K del Lazo.</p>
+        <div id="display-closed-loop2-k">Resultados de la simulación</div>
+        <p class="text-primary">c) Para cada valor de kc, calcular el valor del error estacionario y verificarlo en los gráficos obtenidos.</p>
+        <div id="display-closed-loop2-sse">Resultados de la simulación</div>
+        <p class="text-primary">d) Hacer un gráfico que permita comparar las curvas correspondientes a los diferentes valores de kc.</p>
+        <p class="text-primary">e) Analizar los resultados obtenidos, comparándolos entre sí y con los resultados del ejercicio 2.
+        ¿El error estacionario obtenido para un mismo valor de kc es igual, mayor o menor que en el
+        ejercicio 2? ¿Por qué?</p>
     </div>
 </body>
 </html>
