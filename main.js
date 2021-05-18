@@ -138,9 +138,9 @@ class Main {
         this._chart1.show([sim1], this._showAnimation);
         this._chart2.show([sim1, sim2, sim3], this._showAnimation);
 
-        for (const element of this._displayTimeConstant1) element.innerHTML = sim1.getTimeConstant();
-        for (const element of this._displayTimeConstant2) element.innerHTML = sim2.getTimeConstant();
-        for (const element of this._displayTimeConstant3) element.innerHTML = sim3.getTimeConstant();
+        for (const element of this._displayTimeConstant1) element.innerHTML = sim1.getTimeConstant().toFixed(2);
+        for (const element of this._displayTimeConstant2) element.innerHTML = sim2.getTimeConstant().toFixed(2);
+        for (const element of this._displayTimeConstant3) element.innerHTML = sim3.getTimeConstant().toFixed(2);
     }
 
     tp2() {
@@ -155,9 +155,9 @@ class Main {
             const simulation = new Simulation(process, this._options.time);
             simulations.push(simulation);
 
-            strTimeConstant += `<li><b>${process.name}</b>: La constante de tiempo value <code>${process.getTimeConstant()}h</code>.</li>`;
-            strKConstant += `<li><b>${process.name}</b>: El valor de K es: <code>${process.getK()}</code> (Kp = <code>${process.getKp()}</code>)</li>`;
-            strSSEConstant += `<li><b>${process.name}</b>: El valor del error estacionario es: <code>${process.getSteadyStateError()}</code>.</li>`;
+            strTimeConstant += `<li><b>${process.name}</b>: La constante de tiempo value <code>${process.getTau().toFixed(2)}h</code>.</li>`;
+            strKConstant += `<li><b>${process.name}</b>: El valor de K es: <code>${process.getK().toFixed(2)}</code> (Kp = <code>${process.getKp().toFixed(2)}</code>)</li>`;
+            strSSEConstant += `<li><b>${process.name}</b>: El valor del error estacionario es: <code>${process.getSteadyStateError().toFixed(2)}</code>.</li>`;
         }
         
         this._chart3.show(simulations, this._showAnimation);
@@ -181,8 +181,8 @@ class Main {
             const simulation = new Simulation(process, this._options.time);
             simulations.push(simulation);
 
-            strKConstant += `<li><b>${process.name}</b>: El valor de K es: <code>${process.getK()}</code> (Kp = <code>${process.getKp()}</code>)</li>`;
-            strSSEConstant += `<li><b>${process.name}</b>: El valor del error estacionario es: <code>${process.getSteadyStateError()}</code>.</li>`;
+            strKConstant += `<li><b>${process.name}</b>: El valor de K es: <code>${process.getK().toFixed(2)}</code> (Kp = <code>${process.getKp().toFixed(2)}</code>)</li>`;
+            strSSEConstant += `<li><b>${process.name}</b>: El valor del error estacionario es: <code>${process.getSteadyStateError().toFixed(2)}</code>.</li>`;
         }
         
         this._chart4.show(simulations, this._showAnimation);

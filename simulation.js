@@ -57,7 +57,7 @@ class Simulation {
      * @returns {number} The real time constant value
      */
     getTimeConstant() {
-        return this._process.getTimeConstant();
+        return this._process.getTau();
     }
 
     /**
@@ -89,7 +89,7 @@ class Process {
     /**
      * @returns {number} The process time constant value
      */
-    getTimeConstant() {
+    getTau() {
         return 0; // Must be overriden in the child classe
     }
 
@@ -103,6 +103,7 @@ class Process {
     }
 }
 
+// Ejercicio 1
 class OpenLoopProcess extends Process {
     
     constructor(options = {}) {
@@ -117,7 +118,7 @@ class OpenLoopProcess extends Process {
         this.gasCaudal = options.gasCaudal ?? 10;
     }
     
-    getTimeConstant() {
+    getTau() {
         return this.c1 / (this.c2 * this.v);
     }
 
@@ -135,6 +136,7 @@ class OpenLoopProcess extends Process {
     }
 }
 
+// En comun en ejercicios 2 y 3
 class ClosedLoopProcess extends OpenLoopProcess {
     constructor(options = {}) {
         super(options);
@@ -157,6 +159,7 @@ class ClosedLoopProcess extends OpenLoopProcess {
     }
 }
 
+// Ejercicio 2
 class FirstOrderClosedLoopProcess extends ClosedLoopProcess {
     constructor(options = {}) {
         super(options);
@@ -164,8 +167,8 @@ class FirstOrderClosedLoopProcess extends ClosedLoopProcess {
         this.kv = options.kv ?? 2;
     }
 
-    getTimeConstant() {
-        return super.getTimeConstant() / (1 + this.getK());
+    getTau() {
+        return super.getTau() / (1 + this.getK());
     }
 
     getK() { 
@@ -177,13 +180,15 @@ class FirstOrderClosedLoopProcess extends ClosedLoopProcess {
     }
 
     simulateStep(deltaTime) {
-        const deltaGasCaudal = this.getDeltaM() * this.kv;
-        this.gasCaudal += deltaGasCaudal * deltaTime;
+        //const deltaGasCaudal = this.getDeltaM() * this.kv;
+        //this.gasCaudal += deltaGasCaudal * deltaTime;
+        this.gasCaudal = this.getDeltaM() * this.kv;
 
         super.simulateStep(deltaTime);
     }
 }
 
+// Ejercicio 3
 class SecondOrderClosedLoopProcess extends ClosedLoopProcess {
     constructor(options = {}) {
         super(options);
@@ -193,8 +198,8 @@ class SecondOrderClosedLoopProcess extends ClosedLoopProcess {
         this.kt = options.kt ?? 1; 
     }
 
-    getK() { 
-        return this.getKp() * this.kc * this.kv * this.kh; 
+    getK() {
+        return (this.getTau() - this.fk) / this.fk;
     }
 
     getSteadyStateError() { 
@@ -202,7 +207,7 @@ class SecondOrderClosedLoopProcess extends ClosedLoopProcess {
     }
 
     simulateStep(deltaTime) {
-        // como el valor de la constante kt es 1, para el programa, donde no se incluyen unidades, no provocaría ningún cambio en los valores de las variables
+        // @Profe: como el valor de la constante kt es 1, para el programa, donde no se incluyen unidades, no provocaría ningún cambio en los valores de las variables
         const deltaP = this.getDeltaM() * this.kt;
         const deltaGasCaudal = (deltaP / this.fsv) - (this.gasCaudal / this.fk);
         this.gasCaudal += deltaGasCaudal * deltaTime;
