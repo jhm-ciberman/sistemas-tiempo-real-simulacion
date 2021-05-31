@@ -90,7 +90,7 @@ class Main {
         const m = this._options.m;
         const exteriorTemperature = this._options.exteriorTemperature;
         const interiorTemperature = this._options.interiorTemperature;
-        const gasCaudal = this._options.gasCaudal;
+        const gasCaudal = 0;
         const kv = this._options.kv;
         const kh = this._options.kh;
         const targetTemperature = this._options.targetTemp;
@@ -109,7 +109,7 @@ class Main {
         const m = this._options.m;
         const exteriorTemperature = this._options.exteriorTemperature;
         const interiorTemperature = this._options.interiorTemperature;
-        const gasCaudal = this._options.gasCaudal;
+        const gasCaudal = 0;
         const kv = this._options.kv;
         const kh = this._options.kh;
         const targetTemperature = this._options.targetTemp;
@@ -181,8 +181,8 @@ class Main {
             const simulation = new Simulation(process, this._options.time);
             simulations.push(simulation);
 
-            strKConstant += `<li><b>${process.name}</b>: El valor de K es: <code>${process.getK().toFixed(2)}</code> (Kp = <code>${process.getKp().toFixed(2)}</code>)</li>`;
-            strSSEConstant += `<li><b>${process.name}</b>: El valor del error estacionario es: <code>${process.getSteadyStateError().toFixed(2)}</code>.</li>`;
+            strKConstant += `<li><b>${process.name}</b>: El valor de K es: <code>${process.getK().toFixed(2)}</code> (Kp = <code>${process.getKp().toFixed(2)}</code>, Kv = <code>${process.getKv().toFixed(2)}</code>)</li>`;
+            strSSEConstant += `<li><b>${process.name}</b>: El valor del error estacionario es: <code>${process.getSteadyStateError().toFixed(2)}</code> (Temperatura de estabilización = <code>${process.getStabilizationValue().toFixed(2)} grados</code>).</li>`;
         }
         
         this._chart4.show(simulations, this._showAnimation);
