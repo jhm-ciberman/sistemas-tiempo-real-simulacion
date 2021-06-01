@@ -147,12 +147,14 @@ class ClosedLoopProcess extends OpenLoopProcess {
         this.initialTemperature = this.interiorTemperature;
     }
 
-    getDeltaM() { 
+    getDeltaE() {
         const deltaR = this.kh * this.targetTemperature;
         const deltaC1 = this.kh * this.interiorTemperature;
-        const deltaE = deltaR - deltaC1;
-        const deltaM = deltaE * this.kc;
-        return deltaM;
+        return deltaR - deltaC1;
+    }
+
+    getDeltaM() { 
+        return this.getDeltaE() * this.kc;
     }
 
     getKv() {
@@ -218,7 +220,6 @@ class SecondOrderClosedLoopProcess extends ClosedLoopProcess {
     simulateStep(deltaTime) {
         // @Profe: como el valor de la constante kt es 1, para el programa, donde no se incluyen unidades, no provocaría ningún cambio en los valores de las variables
         const deltaP = this.getDeltaM() * this.kt;
-        console.log(this.gasCaudal);
         const deltaGasCaudal = (deltaP / this.fsv) - (this.gasCaudal / this.fk);
         this.gasCaudal += deltaGasCaudal * deltaTime;
         super.simulateStep(deltaTime);

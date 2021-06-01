@@ -164,6 +164,92 @@
         ¿El error estacionario obtenido para un mismo valor de kc es igual, mayor o menor que en el
         ejercicio 2? ¿Por qué?</p>
         <p>En el caso concreto del trabajo practico (sin modificar ningun parámetro), el eror estacionario es mayor, ya que el valor de K es menor (porque el valor de KV es la mitad)</p>
+
+        <h2>Ejercicio 4: </h2>
+
+        <p>Una acción de control de tipo PD, es decir proporcional más derivativa, con lo cual:</p>
+        <img src="formula_4a.png" alt="Formula">
+        <div class="row mb-4">
+            <div class="col">
+                <label for="value-pd-kc-kd-list">Valores de KC y KD separados por comas. Un par kc, kd por linea.</label>
+                <textarea class="form-control simulation-value" rows="7" name="value-kc-kd-list" id="value-pd-kc-kd-list">
+50, 50
+50, 100
+100, 100
+100, 500
+500, 100
+500, 500
+                </textarea>
+            </div>
+        </div>
+        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en
+función del tiempo).</p>
+        <canvas id="chart5" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes
+combinaciones.</p>
+        <p class="text-primary">c) Analizar:
+        <ul class="text-primary"><li>¿Qué par de valores resulta más conveniente y por qué?</li>
+        <li>¿Qué efectos produce la acción derivativa?</li>
+        <li>¿Qué ocurre al aumentar kc con y sin acción derivativa?.</li></ul></p>
+
+        <p>Una acción de control de tipo PI, es decir proporcional más integrativa, con lo cual:</p>
+        <img src="formula_4b.png" alt="Formula">
+        <div class="row mb-4">
+            <div class="col">
+                <label for="value-pi-kc-kd-list">Valores de KC y KD separados por comas. Un par kc, kd por linea.</label>
+                <textarea class="form-control simulation-value" rows="7" name="value-pi-kc-kd-list" id="value-pi-kc-kd-list">
+10, 0.5
+10, 1
+10, 5
+10, 10
+50, 0.5
+50, 1
+50, 5
+50, 10
+                </textarea>
+            </div>
+        </div>
+        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en
+función del tiempo).</p>
+        <canvas id="chart6" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes
+combinaciones.</p>
+        <p class="text-primary">c) Analizar:
+        <ul class="text-primary"><li>¿Qué efectos produce la acción integral?</li>
+        <li>¿Qué ocurre al aumentar ki en lo que se refiere a las oscilaciones y al tiempo que tarda el
+lazo en estabilizarse?</li></ul></p>
+
+        <p>Una acción de control de tipo PID, es decir proporcional más derivativa más integrativa, con lo cual:</p>
+        <img src="formula_4c.png" alt="Formula">
+        <div class="row mb-4">
+            <div class="col">
+                <label for="value-pi-kc-kd-list">Valores de KC, KD y KI separados por comas. Un par kc, kd, ki por linea.</label>
+                <textarea class="form-control simulation-value" rows="7" name="value-pi-kc-kd-list" id="value-pi-kc-kd-list">
+10, 50, 0.5
+10, 100, 1
+10, 100, 5
+100, 100, 0.5
+100, 100, 1
+100, 500, 5
+500, 100, 0.5
+500, 500, 1
+500, 500, 5
+                </textarea>
+            </div>
+        </div>
+        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en
+función del tiempo).</p>
+        <canvas id="chart7" style="max-width: 1000px; max-height: 600px;"></canvas>
+        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes
+combinaciones.</p>
+        <p class="text-primary">c) Analizar:
+        <ul class="text-primary"><li>¿Qué combinación de valores resulta más conveniente y por qué?</li>
+        <li>¿Qué efectos produce la acción PID?</li>
+        <li>¿Qué ocurre con las oscilaciones para las distintas combinaciones de valores para las
+constantes? ¿Por qué?</li>
+        <li>¿Qué ocurre con el error estacionario para las distintas combinaciones de valores para
+las constantes? ¿Por qué?</li>
+        </ul></p>
     </div>
 </body>
 </html>
