@@ -1,4 +1,3 @@
-// Ejercicio 1
 class Process {
     
     constructor(v, c1, c2, m, interiorTemperature, exteriorTemperature) {
@@ -54,14 +53,22 @@ class RealControl {
         this._kc = kc;
         this._kd = kd;
         this._ki = ki;
+
+        this._totalE = 0;
+        this._prevError = 0;
     }
 
     getKc() { return this._kc; }
 
     getDeltaM(error, deltaTime) { 
-        return error * this._kc;
+        const deltaEdeltaT = (error - this._prevError) / deltaTime;
+        this._prevError = error;
+        this._totalE += error;
+
+        return this._kc * error + this._kd * deltaEdeltaT + this._ki * this._totalE;
     }
 }
+
 
 class LinearValve {
     constructor(kv) {
