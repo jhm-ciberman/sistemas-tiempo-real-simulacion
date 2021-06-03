@@ -1,168 +1,152 @@
-class Point {
-    constructor(time, value) {
-        this.time = time;
-        this.value = value;
-    }
-
-    get x() { return this.time; }
-    get y() { return this.value; }
-}
-
-class Simulation {
-
-    /**
-     * Creates a simulation object. This object is responsible for 
-     * running the simulation of the process over the time. Once the simulation has ran, the
-     * process is NOT resetted to his original state.
-     * 
-     * @param {Process} process The process to simulate
-     * @param {number} totalTime The total time to simulate
-     * @param {number} deltaTime The delta time between points in the simulation
-     */
-    constructor(process, totalTime = 10, deltaTime = 0.125) {
-        this._process = process;
-        this._deltaTime = deltaTime;
-        this._points = [];
-        this._currentTime = 0;
-
-        while (this._currentTime < totalTime) {
-            this._points.push(new Point(this._currentTime, process.getValue()));
-            this._process.simulateStep(deltaTime);
-
-            this._currentTime += deltaTime;
-        }
-    }
-
-    /**
-     * @returns The name of the simulation
-     */
-    getName() { return this._process.name; }
-
-    /**
-     * @returns The info string for the simulation
-     */
-    getInfo() { return this._process.info; }
-
-    /**
-     * Returns a list with the simulated points of the simulation.
-     * The x points represent the time and the y points represents the output variable. 
-     * 
-     * @returns {Point[]} An array of the simulated points up to this time
-     */
-    getPoints() {
-        return this._points;
-    }
-
-    /**
-     * @returns {number} The real time constant value
-     */
-    getTimeConstant() {
-        return this._process.getTau();
-    }
-
-    /**
-     * Returns the nearest simulated point near the time constant value.
-     * 
-     * @returns {Point} The nearest point to the time constant value
-     */
-    getTimeConstantPoint() {
-        const time = this.getTimeConstant();
-        const nearesSimulatedPoint = this._points.find(p => p.time > time);
-        return nearesSimulatedPoint ? nearesSimulatedPoint : null;
-    }
-
-}
-
-class Process {
-    constructor(options = {}) {
-        this.name = options.name ?? "Process";
-        this.info = options.info ?? "";
-    }
-
-    /**
-     * @returns {number} The process controlled directly controlled value
-     */
-    getValue() {
-        return 0; // Must be overriden in the child classe
-    }
-
-    /**
-     * @returns {number} The process time constant value
-     */
-    getTau() {
-        return 0; // Must be overriden in the child classe
-    }
-
-    /**
-     * Simulate a step in the process
-     * 
-     * @param {number} deltaTime The amount of time passed since the last time this function was called
-     */
-    simulateStep(deltaTime) {
-        // Must be overriden in the child class
-    }
-}
-
 // Ejercicio 1
-class OpenLoopProcess extends Process {
+class Process {
     
-    constructor(options = {}) {
-        super(options);
-        
-        this.v = options.v ?? 25;
-        this.c1 = options.c1 ?? 200;
-        this.c2 = options.c2 ?? 2;
-        this.m = options.m ?? 10;
-        this.exteriorTemperature = options.exteriorTemperature ?? 18;
-        this.interiorTemperature = options.interiorTemperature ?? 18;
-        this.gasCaudal = options.gasCaudal ?? 10;
+    constructor(v, c1, c2, m, interiorTemperature, exteriorTemperature) {
+        this._v = v;
+        this._c1 = c1;
+        this._c2 = c2;
+        this._m = m;
+        this._exteriorTemperature = exteriorTemperature;
+        this._interiorTemperature = interiorTemperature;
     }
     
-    getTau() {
-        return this.c1 / (this.c2 * this.v);
-    }
+    getTau() { return this._c1 / (this._c2 * this._v); }
 
-    getKp() { 
-        return this.m / (this.c2 * this.v); 
-    }
+    getKp() {  return this._m / (this._c2 * this._v);  }
 
-    getValue() {
-        return this.interiorTemperature;
-    }
-    
-    simulateStep(deltaTime) {
-        const deltaTemp = (this.m * this.gasCaudal - this.c2 * this.v * (this.interiorTemperature - this.exteriorTemperature)) / this.c1;
-        this.interiorTemperature += deltaTemp * deltaTime;
+    getCurrentTemperature() { return this._interiorTemperature; }
+
+    getTemperature(gasCaudal, deltaTime) {
+        const deltaTemp = (this._m * gasCaudal - this._c2 * this._v * (this._interiorTemperature - this._exteriorTemperature)) / this._c1;
+        this._interiorTemperature += deltaTemp * deltaTime;
+        return this._interiorTemperature;
     }
 }
 
-// En comun en ejercicios 2 y 3
-class ClosedLoopProcess extends OpenLoopProcess {
-    constructor(options = {}) {
-        super(options);
-
-        this.kc = options.kc ?? 50;
-        this.kh = options.kh ?? 0.05;
-        this.targetTemperature = options.targetTemperature ?? 24;
-        this.initialTemperature = this.interiorTemperature;
+class LinearSensor {
+    constructor(kh) {
+        this._kh = kh;
     }
 
-    getDeltaE() {
-        const deltaR = this.kh * this.targetTemperature;
-        const deltaC1 = this.kh * this.interiorTemperature;
+    getKh() { return this._kh; }
+
+    getDeltaE(interiorTemperature, targetTemperature, deltaTime) {
+        const deltaR = this._kh * targetTemperature;
+        const deltaC1 = this._kh * interiorTemperature;
         return deltaR - deltaC1;
     }
+}
 
-    getDeltaM() { 
-        return this.getDeltaE() * this.kc;
+class LinearControl {
+    constructor(kc) {
+        this._kc = kc;
     }
 
-    getKv() {
-        return 0; // Must be overriden in the child classes
+    getKc() { return this._kc; }
+
+    getDeltaM(error, deltaTime) { 
+        return error * this._kc;
+    }
+}
+
+class RealControl {
+    constructor(kc, kd, ki) {
+        this._kc = kc;
+        this._kd = kd;
+        this._ki = ki;
+    }
+
+    getKc() { return this._kc; }
+
+    getDeltaM(error, deltaTime) { 
+        return error * this._kc;
+    }
+}
+
+class LinearValve {
+    constructor(kv) {
+        this._kv = kv;
+    }
+
+    getKv() { return this._kv; }
+
+    getGasCaudal(deltaM, deltaTime) {
+        return deltaM * this._kv;
+    }
+}
+
+class RealValve {
+    constructor(fsv, fk, kt) { 
+        this._fsv = fsv ?? 5;
+        this._fk = fk ?? 5;
+        this._kt = kt ?? 1; 
+        this._currentGasCaudal = 0;
+    }
+
+    getKv() { return this._fk / this._fsv; }
+
+    getGasCaudal(deltaM, deltaTime) {
+        // @Profe: como el valor de la constante kt es 1, para el programa, donde no se incluyen unidades, no provocaría ningún cambio en los valores de las variables
+        const deltaP = deltaM * this._kt;
+        const deltaGasCaudal = (deltaP / this._fsv) - (this._currentGasCaudal / this._fk);
+        this._currentGasCaudal += deltaGasCaudal * deltaTime;
+        return this._currentGasCaudal;
+    }
+}
+
+class Loop {
+    constructor(name, info, process) {
+        this._name = name;
+        this._info = info;
+        this._process = process;
+        this._interiorTemperature = this._process.getCurrentTemperature();
+    }
+
+    getName() { return this._name; }
+
+    getInfo() { return this._info; }
+
+    getValue() { return this._interiorTemperature; }
+
+    getTau() { return this._process.getTau(); }
+
+    getK() {  return this._process.getKp(); }
+
+    simulateStep(deltaTime) {
+        // Abstract method, it's implemented in child classes
+    }
+}
+
+class OpenLoop extends Loop {
+    constructor(name, info, process, gasCaudal) {
+        super(name, info, process);
+
+        this._gasCaudal = gasCaudal;
+    }
+
+    simulateStep(deltaTime) {
+        this._interiorTemperature = this._process.getTemperature(this._gasCaudal, deltaTime);
+    }
+}
+
+// Ejercicio 2
+class ClosedLoop extends Loop {
+    constructor(name, info, process, sensor, controller, valve, targetTemperature) {
+        super(name, info, process)
+
+        this._controller = controller;
+        this._sensor = sensor;
+        this._valve = valve;
+        
+        this._initialTemperature = this._interiorTemperature;
+        this._targetTemperature = targetTemperature;
     }
 
     getK() { 
-        return this.getKp() * this.kc * this.getKv() * this.kh; 
+        return this._process.getKp() 
+            * this._controller.getKc() 
+            * this._valve.getKv() 
+            * this._sensor.getKh(); 
     }
 
     getSteadyStateError() { 
@@ -170,58 +154,18 @@ class ClosedLoopProcess extends OpenLoopProcess {
     }
 
     getStabilizationValue() {
-        var deltaTemperature = this.targetTemperature - this.initialTemperature;
-        return this.targetTemperature - deltaTemperature * this.getSteadyStateError();
-    }
-
-    simulateStep(deltaTime) {
-        super.simulateStep(deltaTime);
-    }
-}
-
-// Ejercicio 2
-class FirstOrderClosedLoopProcess extends ClosedLoopProcess {
-    constructor(options = {}) {
-        super(options);
-
-        this.kv = options.kv ?? 2;
+        return this._targetTemperature - (this._targetTemperature - this._initialTemperature) * this.getSteadyStateError();
     }
 
     getTau() {
         return super.getTau() / (1 + this.getK());
     }
 
-    getKv() {
-        return this.kv;
-    }
-
-
     simulateStep(deltaTime) {
-        this.gasCaudal = this.getDeltaM() * this.kv;
-
-        super.simulateStep(deltaTime);
-    }
-}
-
-// Ejercicio 3
-class SecondOrderClosedLoopProcess extends ClosedLoopProcess {
-    constructor(options = {}) {
-        super(options);
-
-        this.fsv = options.fsv ?? 5;
-        this.fk = options.fk ?? 5;
-        this.kt = options.kt ?? 1; 
-    }
-
-    getKv() {
-        return this.fk / this.fsv;
-    }
-
-    simulateStep(deltaTime) {
-        // @Profe: como el valor de la constante kt es 1, para el programa, donde no se incluyen unidades, no provocaría ningún cambio en los valores de las variables
-        const deltaP = this.getDeltaM() * this.kt;
-        const deltaGasCaudal = (deltaP / this.fsv) - (this.gasCaudal / this.fk);
-        this.gasCaudal += deltaGasCaudal * deltaTime;
-        super.simulateStep(deltaTime);
+        const deltaE = this._sensor.getDeltaE(this._interiorTemperature, this._targetTemperature, deltaTime);
+        const deltaM = this._controller.getDeltaM(deltaE, deltaTime);
+        const gasCaudal = this._valve.getGasCaudal(deltaM, deltaTime);
+        this._interiorTemperature = this._process.getTemperature(gasCaudal, deltaTime);
+        return this._interiorTemperature;
     }
 }
