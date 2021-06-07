@@ -63,7 +63,7 @@ class RealControl {
     getDeltaM(error, deltaTime) { 
         const deltaEdeltaT = (error - this._prevError) / deltaTime;
         this._prevError = error;
-        this._totalE += error;
+        this._totalE += error * deltaTime;
 
         return this._kc * error + this._kd * deltaEdeltaT + this._ki * this._totalE;
     }

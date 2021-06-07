@@ -175,16 +175,25 @@
                 <textarea class="form-control simulation-value" rows="7" name="value-pd" id="value-pd"></textarea>
             </div>
         </div>
-        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en
-función del tiempo).</p>
+        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en función del tiempo).</p>
         <canvas id="chart5" style="max-width: 1000px; max-height: 600px;"></canvas>
-        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes
-combinaciones.</p>
+        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes combinaciones.</p>
+        <p>Arriba</p>
         <p class="text-primary">c) Analizar:
-        <ul class="text-primary"><li>¿Qué par de valores resulta más conveniente y por qué?</li>
-        <li>¿Qué efectos produce la acción derivativa?</li>
-        <li>¿Qué ocurre al aumentar kc con y sin acción derivativa?.</li></ul></p>
-
+        <ul>
+            <li>
+                <p class="text-primary">¿Qué par de valores resulta más conveniente y por qué?</p>
+                <p>Conviene tener un kc alto y un kd alto. El KC alto hace que se reduzca el error estacionario y el KD alto hace que se reduzcan las oscilaciones del sistema.</p>
+            </li>
+            <li>
+                <p class="text-primary">¿Qué efectos produce la acción derivativa?</p>
+                <p>La acción derivativa tiene el efecto de disminuir o reducir totalmente (dependiendo del valor de KD), las oscilaciones producidas por el comportamiento no lineal de los otros componentes del lazo (Valvula, proceso, etc)</p>
+            </li>
+            <li>
+                <p class="text-primary">¿Qué ocurre al aumentar kc con y sin acción derivativa?</p>
+                <p>Al aumentar el kc, se reduce el error estacionario. En el caso de que haya una acción derivativa, esta hace que las oscilaciones iniciales disminuyan, y en el caso de que no haya una acción derivativa, las oscilaciones iniciales son más fuertes.</p>
+            </li>
+        </ul>
         <p>Una acción de control de tipo PI, es decir proporcional más integrativa, con lo cual:</p>
         <img src="formula_4b.png" alt="Formula">
         <div class="row mb-4">
@@ -193,17 +202,23 @@ combinaciones.</p>
                 <textarea class="form-control simulation-value" rows="7" name="value-pi" id="value-pi"></textarea>
             </div>
         </div>
-        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en
-función del tiempo).</p>
+        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en función del tiempo).</p>
         <canvas id="chart6" style="max-width: 1000px; max-height: 600px;"></canvas>
-        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes
-combinaciones.</p>
-        <p class="text-primary">c) Analizar:
-        <ul class="text-primary"><li>¿Qué efectos produce la acción integral?</li>
-        <li>¿Qué ocurre al aumentar ki en lo que se refiere a las oscilaciones y al tiempo que tarda el
-lazo en estabilizarse?</li></ul></p>
-
-        <p>Una acción de control de tipo PID, es decir proporcional más derivativa más integrativa, con lo cual:</p>
+        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes combinaciones.</p>
+        <p>Arriba</p>
+        <p class="text-primary">c) Analizar:</p>
+        <ul>
+            <li>
+                <p class="text-primary">¿Qué efectos produce la acción integral?</p>
+                <p>La acción integral hace que se reduzca el error estacionario a (casi) cero. Cuanto más grande es la acción integral, más rápido se llega a la temperatura deseada del sistema. </p>
+            </li>
+            <li>
+                <p class="text-primary">¿Qué ocurre al aumentar ki en lo que se refiere a las oscilaciones y al tiempo que tarda el lazo en estabilizarse?</p>
+                <p>Cuanto más grande es KI, el tiempo que tarda el lazo es estabilizarse disminuye, pero aumentan las oscilaciones.</p>
+                <p>Cuanto más chico es KI, el tiempo que tarda el lazo es estabilizarse aumenta, pero disminuye las oscilaciones (O más bien no se intensifican las oscilaciones).</p>
+                <p>Una acción de control de tipo PID, es decir proporcional más derivativa más integrativa, con lo cual:</p>
+            </li>
+        </ul>
         <img src="formula_4c.png" alt="Formula">
         <div class="row mb-4">
             <div class="col">
@@ -211,19 +226,30 @@ lazo en estabilizarse?</li></ul></p>
                 <textarea class="form-control simulation-value" rows="7" name="value-pid" id="value-pid"></textarea>
             </div>
         </div>
-        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en
-función del tiempo).</p>
+        <p class="text-primary">a) Para cada caso, obtener un gráfico del comportamiento dinámico del lazo (temperatura en función del tiempo).</p>
         <canvas id="chart7" style="max-width: 1000px; max-height: 600px;"></canvas>
-        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes
-combinaciones.</p>
-        <p class="text-primary">c) Analizar:
-        <ul class="text-primary"><li>¿Qué combinación de valores resulta más conveniente y por qué?</li>
-        <li>¿Qué efectos produce la acción PID?</li>
-        <li>¿Qué ocurre con las oscilaciones para las distintas combinaciones de valores para las
-constantes? ¿Por qué?</li>
-        <li>¿Qué ocurre con el error estacionario para las distintas combinaciones de valores para
-las constantes? ¿Por qué?</li>
-        </ul></p>
+        <p class="text-primary">b) Hacer un gráfico que permita comparar la curvas correspondientes a las diferentes combinaciones.</p>
+        <p>Arriba</p>
+        <p class="text-primary">c) Analizar:</p>
+        <ul>
+            <li>
+                <p class="text-primary">¿Qué combinación de valores resulta más conveniente y por qué?</p>
+                <p>Depende mucho del problema, pero lo ideal es tener valores de KI y KD lo suficientemente altos para que se pueda disminuir las oscilaciones 
+                y el error estacionario, pero no tan altos como para que se produzcan oscilaciones que hagan diverger del valor deseado.</p>
+            </li>
+            <li>
+                <p class="text-primary">¿Qué efectos produce la acción PID?</p>
+                <p>La acción PID es la combinación de PI + PD. Puede reducir las oscilaciones (Accion derivativa), y disminuir el error estacionario (Acción integral)</p>
+            </li>
+            <li>
+                <p class="text-primary">Qué ocurre con las oscilaciones para las distintas combinaciones de valores para las constantes? ¿Por qué?</p>
+                <p>Cuanto mayor es KD, menor son las oscilaciones, ya que la acción derivativa se encarga de agregar una fracción de la derivada en ese punto. Y esto hace que se disminuyan las oscilaciones.</p>
+            </li>
+            <li>
+                <p class="text-primary">¿Qué ocurre con el error estacionario para las distintas combinaciones de valores para las constantes? ¿Por qué?</p>
+                <p>Cuanto mayor es KI, menor es el error estacionario. Ya que la acción integral continuamente agrega una fracción del error al valor actual y por eso hace que disminuya el error estacionario.</p>
+            </li>
+        </ul>
     </div>
 </body>
 </html>
